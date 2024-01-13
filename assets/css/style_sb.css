@@ -1,3 +1,13 @@
+.mw-normal-catlinks ul li:not(:last-of-type)::after {
+  content: ",";
+  margin-right: 0.25rem;
+}
+
+.catlinks-allhidden {
+  display: none;
+}
+
+
 /* Author: Danijel Grabež */
 /* ======================================================================
       ________________
