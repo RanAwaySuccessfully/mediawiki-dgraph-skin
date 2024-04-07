@@ -99,11 +99,8 @@ class DgraphTemplate extends BaseTemplate {
 
 		// Output HTML Page
 		$logos = ResourceLoaderSkinModule::getAvailableLogos( $this->getSkin()->getConfig() );
-		$wordmark = $logos['wordmark'] ?? [
-			"src" => "$assetsPath/assets/images/logo.svg",
-			"width" => 233,
-			"height" => 70,
-		];
+		$wordmark = $logos['wordmark'];
+		$wordmark['src'] = "$wgResourceBasePath/images/sneslab-wordmark.svg";
 
 		?>
 		  <header id="page-header" class="page-header">
@@ -111,10 +108,12 @@ class DgraphTemplate extends BaseTemplate {
 			  <div class="container">
 				<div class="row">
 				  <div class="col-6 col-desktop-4">
-					<figure class="page-logo"><a href="<?php
-					echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] )
-					?>"><img src="<?php echo $wordmark["src"] . '" width="' . $wordmark["width"]
-						.'" height="' . $wordmark["height"] . '"' ?>alt=""></a></figure>
+					<figure class="page-logo">
+						<a href="<?php echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] ) ?>">
+							<img src="<?php echo $logos['icon'] ?>" alt="<?php echo $this->msg('sitename') ?>" height="70" width="70">
+							<img src="<?php echo $wordmark["src"] . '" width="' . $wordmark["width"] . '" height="' . $wordmark["height"] . '"' ?>" alt="">
+						</a>
+					</figure>
 				  </div>
 				  <div class="col-6 col-desktop-8">
 					<nav class="page-nav">
@@ -382,16 +381,14 @@ class DgraphTemplate extends BaseTemplate {
       <div class="container">
         <div class="row">
           <div class="col-12 col-tablet-3">
-            <figure class="page-logo-footer"><a href="<?php
-					echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] );
-					// scale down from 233x70 to
-					$logoWidth = ceil( $wordmark['width'] * 0.6 );
-					$logoHeight = ceil( $wordmark['height'] * 0.6 );
-					?>">
+            <figure class="page-logo-footer">
+				<a href="<?php echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] ); ?>">
+					<img src="<?php echo $logos['icon'] ?>" alt="<?php echo $this->msg('sitename') ?>" height="70" width="70">
 					<img src="<?php echo $wordmark['src']?>"
 						width="<?php echo $wordmark['width']?>"
-						height="<?php echo $wordmark['height']?>" alt="<?php echo $this->msg('sitename') ?>">
-				</a></figure>
+						height="<?php echo $wordmark['height']?>" alt="">
+				</a>
+			</figure>
           </div>
           <div class="col-4 col-tablet-2">
             <nav class="page-footer-nav">
