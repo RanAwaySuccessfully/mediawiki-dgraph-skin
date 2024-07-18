@@ -100,7 +100,7 @@ class DgraphTemplate extends BaseTemplate {
 		// Output HTML Page
 		$logos = ResourceLoaderSkinModule::getAvailableLogos( $this->getSkin()->getConfig() );
 		$wordmark = $logos['wordmark'];
-		$wordmark['src'] = "$wgResourceBasePath/images/sneslab-wordmark.svg";
+		$wordmark['src'] = "$assetsPath/assets/images/logo.svg";
 
 		?>
 		  <header id="page-header" class="page-header">
