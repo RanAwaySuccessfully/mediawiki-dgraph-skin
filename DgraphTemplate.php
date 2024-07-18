@@ -34,7 +34,7 @@ class DgraphTemplate extends BaseTemplate {
 	 * Outputs the entire contents of the (X)HTML page
 	 */
 	public function execute() {
-		$assetsPath = htmlspecialchars( $this->config->get( 'LocalStylePath' ) ) . '/DGraph';
+		$assetsPath = htmlspecialchars( $this->config->get( 'LocalStylePath' ) ) . '/Dgraph';
 
 		// Build additional attributes for navigation urls
 		$nav = $this->data['content_navigation'];
@@ -99,11 +99,8 @@ class DgraphTemplate extends BaseTemplate {
 
 		// Output HTML Page
 		$logos = ResourceLoaderSkinModule::getAvailableLogos( $this->getSkin()->getConfig() );
-		$wordmark = $logos['wordmark'] ?? [
-			"src" => "$assetsPath/assets/images/logo.svg",
-			"width" => 233,
-			"height" => 70,
-		];
+		$wordmark = $logos['wordmark'];
+		$wordmark['src'] = "$assetsPath/assets/images/logo.svg";
 
 		?>
 		  <header id="page-header" class="page-header">
@@ -111,10 +108,12 @@ class DgraphTemplate extends BaseTemplate {
 			  <div class="container">
 				<div class="row">
 				  <div class="col-6 col-desktop-4">
-					<figure class="page-logo"><a href="<?php
-					echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] )
-					?>"><img src="<?php echo $wordmark["src"] . '" width="' . $wordmark["width"]
-						.'" height="' . $wordmark["height"] . '"' ?>alt=""></a></figure>
+					<figure class="page-logo">
+						<a href="<?php echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] ) ?>">
+							<img src="<?php echo $logos['icon'] ?>" alt="<?php echo $this->msg('sitename') ?>" height="70" width="70">
+							<img src="<?php echo $wordmark["src"] . '" width="' . $wordmark["width"] . '" height="' . $wordmark["height"] . '"' ?>" alt="">
+						</a>
+					</figure>
 				  </div>
 				  <div class="col-6 col-desktop-8">
 					<nav class="page-nav">
@@ -141,7 +140,7 @@ class DgraphTemplate extends BaseTemplate {
 						<li class="page-nav__item page-nav__item--box">
 						  <form action="<?php $this->text( 'wgScript' ) ?>" id="searchform" class="form page-nav__form">
 							<input type="hidden" value="Special:Search" name="title">
-							<input type="search" name="search" placeholder="" title="Search dgraph [alt-shift-f]" accesskey="f" id="searchInput" tabindex="1" autocomplete="off" class="form__input page-nav__form-input">
+							<input type="search" name="search" placeholder="" title="Search [alt-shift-f]" accesskey="f" id="searchInput" tabindex="1" autocomplete="off" class="form__input page-nav__form-input">
 							<input id="submit-search" name="submit" type="image" src="<?php echo $assetsPath; ?>/assets/images/icon-form-search.png" alt="Submit" class="page-nav__form-submit">
 						  </form>
 						</li>
@@ -205,19 +204,48 @@ class DgraphTemplate extends BaseTemplate {
 						</li>
 					  </ul>
 					  <ul class="page-nav__list">
-					<?php
-					$nav = $this->data['sidebar']['navigation'] ?? [];
-					foreach( array_slice( $nav, 0, 2 ) as $item ) {
-					?>
-						<li class="page-nav__item">
-							<a href="<?php echo $item['href']?>"
-								class="page-nav__link">
-								<?php echo $item['text']; ?>
-							</a></li>
-					<?php
-					}
-					?>
-					</ul>
+					  <?php foreach ( $this->data['namespace_urls'] as $link ) { ?>
+						<li
+							class="page-nav__item"
+							<?php echo $link['attributes'] ?>>
+							<span>
+								<a
+								class="page-nav__link"
+								href="<?php echo htmlspecialchars( $link['href'] ) ?>"
+								<?php
+									echo $link['key'];
+									if ( isset ( $link['rel'] ) ) {
+									echo ' rel="' . htmlspecialchars( $link['rel'] ) . '"';
+									}
+								?>>
+									<?php
+									if ( array_key_exists( 'text', $link ) ) {
+										echo array_key_exists( 'img', $link )
+										? '<img src="' . $link['img'] . '" alt="' . $link['text'] . '" />'
+										: htmlspecialchars( $link['text'] );
+									}
+									?>
+								</a>
+							</span>
+						</li>
+						<?php
+						}
+						?>
+						<?php foreach ( $this->data['variant_urls'] as $link ) { ?>
+						<li
+							class="page-nav__item"
+							<?php echo $link['attributes'] ?>>
+							<a
+							class="page-nav__link"
+							href="<?php echo htmlspecialchars( $link['href'] ) ?>"
+							<?php echo $link['key'] ?>>
+								<?php echo htmlspecialchars( $link['text'] ) ?>
+							</a>
+						</li>
+						<?php
+						}
+						?>
+					  </ul>
 					</nav>
 				  </div>
 				</div>
@@ -262,6 +290,21 @@ class DgraphTemplate extends BaseTemplate {
   <div class="page-content page-content--page">
     <div class="container">
       <div class="row">
+
+	  	<?php
+			if ( $this->data['sitenotice'] ) {
+			echo "<br>";
+				echo Html::rawElement('div',
+					[
+						'id' => 'siteNotice',
+						'class' => 'mw-body-content',
+					],
+					// Raw HTML
+					$this->get( 'sitenotice' )
+				);
+			}
+		?>
+
         <div class="col-12">
 		  <header class="page-content__header">
 			<?php
@@ -338,25 +381,24 @@ class DgraphTemplate extends BaseTemplate {
       <div class="container">
         <div class="row">
           <div class="col-12 col-tablet-3">
-            <figure class="page-logo-footer"><a href="<?php
-					echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] );
-					// scale down from 233x70 to
-					$logoWidth = ceil( $wordmark['width'] * 0.6 );
-					$logoHeight = ceil( $wordmark['height'] * 0.6 );
-					?>">
+            <figure class="page-logo-footer">
+				<a href="<?php echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] ); ?>">
+					<img src="<?php echo $logos['icon'] ?>" alt="<?php echo $this->msg('sitename') ?>" height="70" width="70">
 					<img src="<?php echo $wordmark['src']?>"
 						width="<?php echo $wordmark['width']?>"
-						height="<?php echo $wordmark['height']?>" alt="<?php echo $this->msg('sitename') ?>">
-				</a></figure>
+						height="<?php echo $wordmark['height']?>" alt="">
+				</a>
+			</figure>
           </div>
           <div class="col-4 col-tablet-2">
             <nav class="page-footer-nav">
               <h6 class="page-footer-nav__title"><?php echo $this->getMsg( 'dgraph-header-company' ) ?></h6>
               <ul class="page-footer-nav__list">
+			  <?php $this->renderFooterPortal( $this->data['sidebar'], "navigation"); ?>
               <?php
                 $validFooterLinks = $this->getFooterLinks();
                 foreach( ( $validFooterLinks['places'] ?? [] ) as $key => $link ) {
-                    ?><li class="page-footer-nav__item"><?php
+                    ?><li id="" class="page-footer-nav__item"><?php
                     echo Html::rawElement( 'span', [
                         'id' => 'footer-' . $link,
                     ], $this->get( $link ) );
@@ -369,24 +411,15 @@ class DgraphTemplate extends BaseTemplate {
             <nav class="page-footer-nav">
               <h6 class="page-footer-nav__title"><?php echo $this->getMsg( 'dgraph-header-community' ) ?></h6>
               <ul class="page-footer-nav__list">
-                <?php
-                echo $this->footerNavItem( 'community-1' );
-                echo $this->footerNavItem( 'community-2' );
-                echo $this->footerNavItem( 'github' );
-                echo $this->footerNavItem( 'community-3' );
-                echo $this->footerNavItem( 'community-4' );
-                ?>
+			    <?php $this->renderFooterPortal( $this->data['sidebar'], "Community"); ?>
               </ul>
             </nav>
           </div>
           <div class="col-4 col-tablet-2">
             <nav class="page-footer-nav">
-              <h6 class="page-footer-nav__title"><?php echo $this->getMsg( 'dgraph-header-connect' ) ?></h6>
+              <h6 class="page-footer-nav__title"><?php echo $this->getMsg( 'dgraph-header-tools' ) ?></h6>
               <ul class="page-footer-nav__list">
-                <?php
-                echo $this->footerNavItem( 'twitter' );
-                echo $this->footerNavItem( 'connect-1' );
-                ?>
+			    <?php $this->renderFooterPortal( $this->data['sidebar'], "TOOLBOX"); ?>
               </ul>
             </nav>
           </div>
@@ -449,41 +482,21 @@ class DgraphTemplate extends BaseTemplate {
 	 *
 	 * @param array $portals
 	 */
-	protected function renderPortals( $portals ) {
-		// Force the rendering of the following portals
-		if ( !isset( $portals['SEARCH'] ) ) {
-			$portals['SEARCH'] = true;
-		}
-		if ( !isset( $portals['TOOLBOX'] ) ) {
-			$portals['TOOLBOX'] = true;
-		}
-		if ( !isset( $portals['LANGUAGES'] ) ) {
-			$portals['LANGUAGES'] = true;
-		}
-		// Render portals
-		foreach ( $portals as $name => $content ) {
-			if ( $content === false ) {
-				continue;
-			}
+	protected function renderFooterPortal( array $sidebar, $sidetype ) {
+		$portals = $sidebar[$sidetype];
 
-			// Numeric strings gets an integer when set as key, cast back - T73639
-			$name = (string)$name;
-
-			switch ( $name ) {
-				case 'SEARCH':
-					break;
-				case 'TOOLBOX':
-					$this->renderPortal( 'tb', $this->getToolbox(), 'toolbox', 'SkinTemplateToolboxEnd' );
-					break;
-				case 'LANGUAGES':
-					if ( $this->data['language_urls'] !== false ) {
-						$this->renderPortal( 'lang', $this->data['language_urls'], 'otherlanguages' );
-					}
-					break;
-				default:
-					$this->renderPortal( $name, $content );
-					break;
-			}
+		switch ( $sidetype ) {
+			case 'SEARCH':
+				break;
+			case 'TOOLBOX':
+				$this->renderPortal( 'tb', $this->getToolbox(), 'toolbox', 'SkinTemplateToolboxEnd' );
+				break;
+			case 'LANGUAGES':
+				$this->renderPortal( 'lang', $this->data['language_urls'], 'otherlanguages' );
+				break;
+			default:
+				$this->renderPortal( $sidetype, $portals);
+				break;
 		}
 	}
 
@@ -499,40 +512,18 @@ class DgraphTemplate extends BaseTemplate {
 		}
 		$msgObj = wfMessage( $msg );
 		$labelId = Sanitizer::escapeIdForAttribute( "p-$name-label" );
-		?>
-		<div class="portal" role="navigation" id='<?php
-		echo Sanitizer::escapeIdForAttribute( "p-$name" )
-		?>'<?php
-		echo Linker::tooltip( 'p-' . $name )
-		?> aria-labelledby='<?php echo $labelId ?>'>
-			<h3<?php $this->html( 'userlangattributes' ) ?> id='<?php echo $labelId ?>'><?php
-				echo htmlspecialchars( $msgObj->exists() ? $msgObj->text() : $msg );
-				?></h3>
+		if ( is_array( $content ) ) {
+			foreach ( $content as $key => $val ) {
+				echo $this->makeListItem( $key, $val );
+			}
+			if ( $hook !== null ) {
+				Hooks::run( $hook, array( &$this, true ) );
+			}
+		} else {
+			echo $content; /* Allow raw HTML block to be defined by extensions */
+		}
 
-			<div class="body">
-				<?php
-				if ( is_array( $content ) ) {
-					?>
-					<ul>
-						<?php
-						foreach ( $content as $key => $val ) {
-							echo $this->makeListItem( $key, $val );
-						}
-						if ( $hook !== null ) {
-							Hooks::run( $hook, array( &$this, true ) );
-						}
-						?>
-					</ul>
-				<?php
-				} else {
-					echo $content; /* Allow raw HTML block to be defined by extensions */
-				}
-
-				$this->renderAfterPortlet( $name );
-				?>
-			</div>
-		</div>
-	<?php
+		$this->renderAfterPortlet( $name );
 	}
 
 	/**
