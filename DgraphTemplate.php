@@ -233,7 +233,7 @@ class DgraphTemplate extends BaseTemplate {
 						?>
 						<?php foreach ( $this->data['variant_urls'] as $link ) { ?>
 						<li
-							class="page-nav__item PLACEHOLDER_VARIANT_URL_CLASS_WHAT_IS_THIS_AGAIN"
+							class="page-nav__item"
 							<?php echo $link['attributes'] ?>>
 							<a
 							class="page-nav__link"
