@@ -489,7 +489,8 @@ class DgraphTemplate extends BaseTemplate {
 			case 'SEARCH':
 				break;
 			case 'TOOLBOX':
-				$this->renderPortal( 'tb', $this->getToolbox(), 'toolbox', 'SkinTemplateToolboxEnd' );
+				$toolbox = $this->data['sidebar']['TOOLBOX'];
+				$this->renderPortal( 'tb', $toolbox, 'toolbox', 'SkinTemplateToolboxEnd' );
 				break;
 			case 'LANGUAGES':
 				$this->renderPortal( 'lang', $this->data['language_urls'], 'otherlanguages' );
@@ -523,7 +524,8 @@ class DgraphTemplate extends BaseTemplate {
 			echo $content; /* Allow raw HTML block to be defined by extensions */
 		}
 
-		$this->renderAfterPortlet( $name );
+		$skin = $this->getSkin();
+		$skin->getAfterPortlet( $name );
 	}
 
 	/**
