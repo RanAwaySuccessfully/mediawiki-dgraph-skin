@@ -3,15 +3,15 @@
 		"authors": []
 	},
 	"skinname-dgraph": "Dgraph",
-	"dgraph-skin-desc": "Dgraph skin.",
+	"dgraph-skin-desc": "Dgraph skin (SnesLab version).",
 	"dgraph-more-actions": "More",
 	"dgraph-header-company": "SnesLab",
 	"dgraph-header-community": "Community",
 	"dgraph-header-tools": "Tools",
-	"dgraph-link-twitter-url": "https://twitter.com/wikimediatech/",
+	"dgraph-link-twitter-url": "https://twitter.com/sneslab/",
 	"dgraph-link-twitter-text": "Twitter",
 	"dgraph-link-twitter-title": "We are on Twitter, check it out.",
-	"dgraph-link-github-url": "https://github.com/wikimedia/mediawiki-dgraph-skin",
+	"dgraph-link-github-url": "https://github.com/RanAwaySuccessfully/mediawiki-dgraph-skin",
 	"dgraph-link-github-text": "Github",
 	"dgraph-link-github-title": "We are on GitHub, check it out."
 }
