@@ -98,7 +98,7 @@ class DgraphTemplate extends BaseTemplate {
 			$this->getSkin()->getTitle()->getPageViewLanguage()->getHtmlCode();
 
 		// Output HTML Page
-		$logos = ResourceLoaderSkinModule::getAvailableLogos( $this->getSkin()->getConfig() );
+		$logos = MediaWiki\ResourceLoader\SkinModule::getAvailableLogos( $this->getSkin()->getConfig() );
 		$wordmark = $logos['wordmark'];
 
 		?>
@@ -517,7 +517,9 @@ class DgraphTemplate extends BaseTemplate {
 				echo $this->makeListItem( $key, $val );
 			}
 			if ( $hook !== null ) {
-				Hooks::run( $hook, array( &$this, true ) );
+				MediaWiki\MediaWikiServices::getInstance()
+					->getHookContainer()
+					->run( $hook, array( &$this, true ) );
 			}
 		} else {
 			echo $content; /* Allow raw HTML block to be defined by extensions */
